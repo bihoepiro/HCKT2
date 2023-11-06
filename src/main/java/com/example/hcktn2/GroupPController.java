@@ -18,6 +18,8 @@ public class GroupPController {
     private GroupPRepository groupPRepository;
     @Autowired
     private PersonRepository personRepository;
+    @Autowired
+    private TypeGRepository typeGRepository;
 
     @GetMapping
     public ResponseEntity<List<GroupP>> getAllGroups() {
@@ -55,6 +57,20 @@ public class GroupPController {
             persons.add(personExists);
         }
         newGroupP.setMembers(persons);
+
+        // Obtener estudiantes existentes por sus IDs
+        Set<TypeG> types = new HashSet<>();
+        for (TypeG type : groupP.getTypes()) {
+            Long typeId = type.getId();
+            TypeG typeExists = typeGRepository.findById(typeId).orElse(null);
+            if (typeExists == null) {
+                return ResponseEntity.badRequest().body("El tipo con ID " + typeId + " no existe.");
+            }
+            types.add(typeExists);
+        }
+        newGroupP.setMembers(persons);
+        newGroupP.setTypes(types);
+
         groupPRepository.save(newGroupP);
 
         return ResponseEntity.ok("Grupo creado con éxito y se le asignaron las personas existentes.");
