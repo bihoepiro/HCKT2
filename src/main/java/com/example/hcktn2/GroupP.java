@@ -23,6 +23,22 @@ public class GroupP {
     )
     private Set<Person> members = new HashSet<>();
 
+    @ManyToMany(cascade = { CascadeType.ALL })
+    @JoinTable(
+            name = "group_types",
+            joinColumns = { @JoinColumn(name = "id_group") },
+            inverseJoinColumns = { @JoinColumn(name = "id_type") }
+    )
+    private Set<TypeG> types = new HashSet<>();
+
+    public Set<TypeG> getTypes() {
+        return types;
+    }
+
+    public void setTypes(Set<TypeG> types) {
+        this.types = types;
+    }
+
     public GroupP() {
     }
 
@@ -47,9 +63,10 @@ public class GroupP {
         this.members = members;
     }
 
-    public GroupP(String name, Long id, Set<Person> members) {
+    public GroupP(String name, Long id, Set<Person> members, Set<TypeG> types) {
         this.name = name;
         this.id = id;
         this.members = members;
+        this.types = types;
     }
 }
